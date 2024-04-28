@@ -1,4 +1,5 @@
 # mongodb_handler.py
+import json
 import pymongo # type: ignore
 
 class MongoDBHandler:
@@ -27,5 +28,12 @@ class MongoDBHandler:
             result = collection.bulk_write(bulk_operations)
 
             print(f"{result.upserted_count} products inserted, {result.modified_count} products updated in MongoDB")
+        except pymongo.errors.ConnectionFailure as e:
+            print(f"Error connecting to MongoDB: {str(e)}")
+            print("Storing data locally in JSON file...")
+            # Store data in local JSON file
+            with open("scraped_data.json", "w") as json_file:
+                json.dump(data, json_file, indent=4)
+            print("Data stored locally in scraped_data.json")
         except Exception as e:
             print(f"Error occurred while storing data in MongoDB: {str(e)}")
